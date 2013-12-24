@@ -45,15 +45,24 @@ class Explore extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $fileName = $input->getArgument('file');
-        $initial = $input->getArgument('initial');
-        $final = $input->getArgument('final');
+        $initial  = $input->getArgument('initial');
+        $final    = $input->getArgument('final');
         
-        $scan = new Scan();
-        $file = new File($fileName, 'c+');
         $string = new String();
+        
         $string->setReplacedString($initial);
         $string->setStringReplacement($final);
-        $scan->doReplaceInAllFile($file, $string);
-        
+        try {
+            $file   = new File($fileName, $string);
+            try {
+              $file->doReplaceInAllFile();
+            } catch (\Exception $ex) {
+                
+            }
+           
+        } 
+        catch (\Exception $ex) {
+            $output->writeln('<error>' . $ex->getMessage() . '</error>');
+        }
     }
 }
