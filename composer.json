@@ -1,0 +1,13 @@
+{
+    "require": {
+        "phpunit/phpunit": "3.*",
+        "symfony/console": "2.5.*@dev"
+    },
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-0": {
+            "Hj\\": "src/",
+            "Hj\\Tests": "tests/"
+        }
+    }
+}
