@@ -8,7 +8,6 @@
 
 namespace Hj\Tests\Unit;
 
-use \Hj\String;
 use \PHPUnit_Framework_MockObject_MockObject;
 use \PHPUnit_Framework_TestCase;
 

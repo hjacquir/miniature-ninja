@@ -8,6 +8,7 @@
 
 namespace Hj;
 
+use \Exception;
 use \Symfony\Component\Console\Command\Command;
 use \Symfony\Component\Console\Input\InputArgument;
 use \Symfony\Component\Console\Input\InputInterface;
@@ -53,15 +54,15 @@ class Explore extends Command
         $string->setReplacedString($initial);
         $string->setStringReplacement($final);
         try {
-            $file   = new File($fileName, $string);
+            $file   = new File($fileName, $string, $output);
             try {
               $file->doReplaceInAllFile();
-            } catch (\Exception $ex) {
-                
+            } catch (Exception $ex) {
+//                $output->writeln('<error>' . $ex->getMessage() . '</error>');
             }
            
         } 
-        catch (\Exception $ex) {
+        catch (Exception $ex) {
             $output->writeln('<error>' . $ex->getMessage() . '</error>');
         }
     }

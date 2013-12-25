@@ -8,7 +8,9 @@
 
 namespace Hj;
 
+use \Exception;
 use \SplFileObject;
+use \Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * The current file used to been browsed
@@ -20,15 +22,23 @@ class File extends SplFileObject implements FileInterface
      */
     private $string;
     
+    /**
+     *
+     * @var OutputInterface
+     */
+    private $output;
+    
     public function __construct(
             $filename,
-            StringInterface $string
+            StringInterface $string,
+            OutputInterface $output
     ) {
         if (false === file_exists($filename)) {
-            throw new \Exception('The file should not exist');
+            throw new Exception('The file [' . $filename . '] should not exist');
         }
         parent::__construct($filename, 'c+');
         $this->string = $string;
+        $this->output = $output;
     }
 
     /**
@@ -37,11 +47,13 @@ class File extends SplFileObject implements FileInterface
     public function doReplaceInAllFile()
     {
         $fileGetContent = file_get_contents($this);
+        
         try {
             $filePutContent = $this->replaceTheString($fileGetContent);
             file_put_contents($this, $filePutContent);
-        } catch (\Exception $ex) {
-            echo $ex->getMessage();
+            $this->output->writeln('<info>The string was succesfully replaced');
+        } catch (Exception $ex) {
+            $this->output->writeln('<error>' . $ex->getMessage() . '</error>');
         }
     }
     
@@ -50,12 +62,13 @@ class File extends SplFileObject implements FileInterface
      * 
      * @return string
      */
-    private function replaceTheString($content)
+    public function replaceTheString($content)
     {
         if (false === strpos($content, $this->string->getReplacedString())) {
-           $message = 'The string ' . $this->string->getReplacedString() . 
-                   ' was not found in the file' . "\n";
-           throw new \Exception($message) ;
+           $message = 'The string [' . $this->string->getReplacedString() . 
+                   '] was not found in the file' . "\n";
+           
+           throw new Exception($message) ;
         }
         $str = str_replace(
                 $this->string->getReplacedString(), 
