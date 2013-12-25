@@ -48,16 +48,10 @@ class File extends SplFileObject implements FileInterface
     {
         $fileGetContent = file_get_contents($this);
         
-        try {
-            $filePutContent = $this->replaceTheString($fileGetContent);
-            file_put_contents($this, $filePutContent);
-            $this->output->writeln('<info>The string was succesfully replaced');
-        } catch (Exception $ex) {
-            /**
-             * @todo Not thrown exception on unit test. Why ?
-             */
-            $this->output->writeln('<error>' . $ex->getMessage() . '</error>');
-        }
+        $filePutContent = $this->replaceTheString($fileGetContent);
+        file_put_contents($this, $filePutContent);
+        
+        $this->output->writeln('<info>The string was succesfully replaced');
     }
     
     /**

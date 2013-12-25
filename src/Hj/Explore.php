@@ -58,7 +58,7 @@ class Explore extends Command
             try {
               $file->doReplaceInAllFile();
             } catch (Exception $ex) {
-//                $output->writeln('<error>' . $ex->getMessage() . '</error>');
+                $output->writeln('<error>' . $ex->getMessage() . '</error>');
             }
            
         } 
