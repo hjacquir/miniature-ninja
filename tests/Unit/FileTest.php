@@ -140,7 +140,7 @@ class FileTest extends PHPUnit_Framework_TestCase
      /**
      * @expectedException        Exception
      * @expectedExceptionMessage The string [zererz] was not found in the file
-      * @todo why this test not thrown an exception ?
+     * @todo why this test not thrown an exception ?
      */
     public function testShouldThrowAnExceptionWhenTheInitialStringDoNoExistWhenTryToReplace()
     {

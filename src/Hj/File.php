@@ -54,7 +54,7 @@ class File extends SplFileObject implements FileInterface
             $this->output->writeln('<info>The string was succesfully replaced');
         } catch (Exception $ex) {
             /**
-             * @todo Not cover by unit test. Why ?
+             * @todo Not thrown exception on unit test. Why ?
              */
             $this->output->writeln('<error>' . $ex->getMessage() . '</error>');
         }

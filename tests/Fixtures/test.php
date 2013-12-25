@@ -6,4 +6,4 @@
  * Time: 15:06:25
  */
 
-echo 'I was a string before change';
+echo 'I am a string after change';
