@@ -13,7 +13,6 @@ use \Hj\File;
 use \Hj\String;
 use \PHPUnit_Framework_MockObject_MockObject;
 use \PHPUnit_Framework_TestCase;
-use \Symfony\Component\Console\Output\OutputInterface;
 
 require_once '../..../../../vendor/autoload.php';
 
@@ -33,16 +32,9 @@ class FileTest extends PHPUnit_Framework_TestCase
      */
     private $string;
     
-    /**
-     *
-     * @var OutputInterface|PHPUnit_Framework_MockObject_MockObject
-     */
-    private $output;
-    
     public function setUp()
     {
          $this->string = $this->getMock('Hj\StringInterface');
-         $this->output = $this->getMock('\Symfony\Component\Console\Output\OutputInterface');
     }
     
     /**
@@ -52,7 +44,7 @@ class FileTest extends PHPUnit_Framework_TestCase
      */
     private function getFile($fileName)
     {
-        $this->file = new File($fileName, $this->string, $this->output);
+        $this->file = new File($fileName, $this->string);
         
         return $this->file;
     }
@@ -117,7 +109,7 @@ class FileTest extends PHPUnit_Framework_TestCase
     
     /**
      * @expectedException        Exception
-     * @expectedExceptionMessage The string [zererz] was not found in the file
+     * @expectedExceptionMessage The string [zererz] was not found in ../Fixtures/test.php
      */
     public function testShouldThrowAnExceptionWhenTheInitialStringDoNoExist()
     {
@@ -139,7 +131,7 @@ class FileTest extends PHPUnit_Framework_TestCase
     
      /**
      * @expectedException        Exception
-     * @expectedExceptionMessage The string [zererz] was not found in the file
+     * @expectedExceptionMessage The string [zererz] was not found in ../Fixtures/test.php
      */
     public function testShouldThrowAnExceptionWhenTheInitialStringDoNoExistWhenTryToReplace()
     {

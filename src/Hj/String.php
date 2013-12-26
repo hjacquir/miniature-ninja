@@ -1,5 +1,7 @@
 <?php
 
+use \Hj\StringInterface;
+
 /* Created by Hatim Jacquir
  * User: Hatim Jacquir <jacquirhatim@gmail.com>
  * Date: 20 déc. 2013
@@ -16,19 +18,19 @@ class String implements StringInterface
     /**
      * The string which been replaced in the file
      * 
-     * @var string
+     * @var string The initial string
      */
     private $replacedString;
     
     /**
      * The string which replace
      * 
-     * @var string
+     * @var string The final string
      */
     private $stringReplacement;
     
     /**
-     * @return string
+     * @return string Get the initial string
      */
     public function getReplacedString()
     {
@@ -36,7 +38,7 @@ class String implements StringInterface
     }
     
     /**
-     * @return string
+     * @return string Get the final string
      */
     public function getStringReplacement()
     {
@@ -44,7 +46,7 @@ class String implements StringInterface
     }
     
     /**
-     * @param string $replacedString
+     * @param string $replacedString Set the initial string
      */
     public function setReplacedString($replacedString)
     {
@@ -52,7 +54,7 @@ class String implements StringInterface
     }
     
     /**
-     * @param string $stringReplacement
+     * @param string $stringReplacement Set the final string
      */
     public function setStringReplacement($stringReplacement)
     {

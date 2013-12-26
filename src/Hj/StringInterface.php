@@ -14,22 +14,22 @@ namespace Hj;
 interface StringInterface
 {
     /**
-     * @return string
+     * @return string Get the initial string
      */
     public function getReplacedString();
     
     /**
-     * @return string
+     * @return string Get the final string
      */
     public function getStringReplacement();
     
     /**
-     * @param string $replacedString
+     * @param string $replacedString Set the initial string
      */
     public function setReplacedString($replacedString);
     
-    /**
-     * @param string $stringReplacement
+     /**
+     * @param string $stringReplacement Set the final string
      */
     public function setStringReplacement($stringReplacement);
 }
