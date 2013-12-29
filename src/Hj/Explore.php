@@ -45,7 +45,7 @@ class Explore extends Command
         $description = 'This command allows you to enter the name of the file' . 
                 ' or directory and the string to replace it with the ' . 
                 'replacement string';
-        $this->setName('r:s')
+        $this->setName('s:r')
                 ->setDescription($description)
                 ->addArgument(
                         'initial', 
