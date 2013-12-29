@@ -31,8 +31,8 @@ class Explore extends Command
     private $string;
     
     /**
-     * @param type            $name
-     * @param StringInterface $string
+     * @param string|null            $name   The command name should be null
+     * @param StringInterface $string A string object
      */
     public function __construct($name, StringInterface $string)
     {
@@ -45,7 +45,7 @@ class Explore extends Command
         $description = 'This command allows you to enter the name of the file' . 
                 ' or directory and the string to replace it with the ' . 
                 'replacement string';
-        $this->setName('replace:string')
+        $this->setName('r:s')
                 ->setDescription($description)
                 ->addArgument(
                         'initial', 
@@ -74,7 +74,7 @@ class Explore extends Command
         $this->string->setStringReplacement($final);
         $this->countFiles = 0;
         $this->executeReplace($fileName, $this->string, $output);
-        $message = '<info>' . $this->countFiles . ' files are done.</info>';
+        $message = '<comment>' . $this->countFiles . ' files are done.</comment>';
         $output->writeln($message);
     }
     

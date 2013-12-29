@@ -32,7 +32,7 @@ class File extends SplFileObject implements FileInterface
             StringInterface $string
     ) {
         if (false === file_exists($filename)) {
-            throw new Exception('The file [' . $filename . '] should not exist');
+            throw new Exception('The file or directory [' . $filename . '] should not exist');
         }
         parent::__construct($filename, 'c+');
         $this->string = $string;
