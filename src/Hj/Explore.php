@@ -21,23 +21,41 @@ use \Symfony\Component\Console\Output\OutputInterface;
 class Explore extends Command
 {
     /**
+     * The number of files execute
+     * 
      * @var integer
      */
     private $countFiles;
     
     /**
+     * The string object
+     * 
      * @var StringInterface
      */
     private $string;
     
     /**
-     * @param string|null            $name   The command name should be null
-     * @param StringInterface $string A string object
+     * The execution time of the script
+     * 
+     * @var float
      */
-    public function __construct($name, StringInterface $string)
+    private $executionTime;
+    
+    /**
+     * @param string|null            $name          The command name should be null
+     * @param StringInterface        $string        A string object
+     * @param TimeExecutionInterface $executionTime The time execution of the script
+     */
+    public function __construct(
+            $name, 
+            StringInterface $string, 
+            TimeExecutionInterface $executionTime
+    )
     {
         parent::__construct(null);
-        $this->string = $string;
+        
+        $this->string        = $string;
+        $this->executionTime = $executionTime;
     }
     
     protected function configure()
@@ -64,6 +82,10 @@ class Explore extends Command
                     );
     }
     
+    /**
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $fileName = $input->getArgument('file');
@@ -72,18 +94,26 @@ class Explore extends Command
         
         $this->string->setReplacedString($initial);
         $this->string->setStringReplacement($final);
+        
         $this->countFiles = 0;
+        
+        $this->executionTime->setBegin();
+        $this->executionTime->start();
         $this->executeReplace($fileName, $this->string, $output);
-        $message = '<comment>' . $this->countFiles . ' files are done.</comment>';
+        $this->executionTime->stop();
+        
+        $message = '<comment>' . $this->countFiles . ' files are done in ' 
+                . $this->executionTime->getEnd() . ' microsecondes.</comment>';
+                
         $output->writeln($message);
     }
     
     /**
-     * @param string          $fileName The file or directory name
-     * @param StringInterface $string A string object
-     * @param OutputInterface $output The console Output
+     * @param string                 $fileName      The file or directory name
+     * @param StringInterface        $string        A string object
+     * @param OutputInterface        $output        The console Output
      */
-    protected function executeReplace($fileName, StringInterface $string, OutputInterface $output) 
+    protected function executeReplace($fileName, StringInterface $string, OutputInterface $output)
     {
         try {
             if (false === is_dir($fileName)) {

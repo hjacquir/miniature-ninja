@@ -2,6 +2,7 @@
 
 use \Hj\Explore;
 use \Hj\String;
+use \Hj\TimeExecution;
 use \Symfony\Component\Console\Application;
 
 require_once './vendor/autoload.php';
@@ -13,6 +14,7 @@ require_once './vendor/autoload.php';
  */
 $app    = new Application();
 $string = new String();
+$executionTime = new TimeExecution();
 
-$app->add(new Explore(null, $string));
+$app->add(new Explore(null, $string, $executionTime));
 $app->run();
