@@ -13,7 +13,17 @@ namespace Hj;
  */
 interface FileInterface
 {
-   /**
-    *  do nothing here used now only for DI 
-    */
+    /**
+     * Set the name of the file
+     * 
+     * @param string $fileName The name of the file
+     */
+    public function setFileName($fileName);
+    
+    /**
+     * Set the string objetc
+     * 
+     * @param StringInterface $string The string object
+     */
+    public function setString(StringInterface $string);
 }

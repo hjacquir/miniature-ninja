@@ -21,13 +21,6 @@ use \Symfony\Component\Console\Output\OutputInterface;
 class Explore extends Command
 {
     /**
-     * The number of files execute
-     * 
-     * @var integer
-     */
-    private $countFiles;
-    
-    /**
      * The string object
      * 
      * @var StringInterface
@@ -42,20 +35,32 @@ class Explore extends Command
     private $executionTime;
     
     /**
-     * @param string|null            $name          The command name should be null
+     *
+     * @var DirectoryIterator
+     */
+    private $directory;
+    
+    /**
+     * 
+     * @param string|null            $name          The name of the command
      * @param StringInterface        $string        A string object
-     * @param TimeExecutionInterface $executionTime The time execution of the script
+     * @param TimeExecutionInterface $executionTime A time execution object
+     * @param FileInterface          $file          A file object
+     * @param \Iterator              $directory     A directory object
      */
     public function __construct(
             $name, 
             StringInterface $string, 
-            TimeExecutionInterface $executionTime
-    )
-    {
+            TimeExecutionInterface $executionTime,
+            FileInterface $file,
+            \Iterator $direcory
+    ) {
         parent::__construct(null);
         
         $this->string        = $string;
         $this->executionTime = $executionTime;
+        $this->file          = $file;
+        $this->directory     = $direcory;
     }
     
     protected function configure()
@@ -68,12 +73,12 @@ class Explore extends Command
                 ->addArgument(
                         'initial', 
                         InputArgument::REQUIRED,
-                        'What string do you try to replace ?'
+                        'The initial string you try to replace'
                   )
                 ->addArgument(
                         'final', 
                         InputArgument::REQUIRED,
-                        'The string which replace the initial'
+                        'The final string which replace the initial'
                     )
                 ->addArgument(
                         'file', 
@@ -95,8 +100,6 @@ class Explore extends Command
         $this->string->setReplacedString($initial);
         $this->string->setStringReplacement($final);
         
-        $this->countFiles = 0;
-        
         $this->executionTime->setBegin(0);
         $this->executionTime->setEnd(0);
         $this->executionTime->setDuration(0);
@@ -104,10 +107,11 @@ class Explore extends Command
         $this->executeReplace($fileName, $this->string, $output);
         $this->executionTime->stop();
         
-        $message  = '<comment>No file are done</comment>';
+        $message              = '<comment>No file are done</comment>';
+        $numberOfFilesSuccess = $this->file->getCountFiles();
         
-        if ($this->countFiles > 0) {
-            $message = '<comment>' . $this->countFiles . ' files are done in ' 
+        if ( $numberOfFilesSuccess > 0) {
+            $message = '<comment>' . $numberOfFilesSuccess . ' files are done in ' 
                 . $this->executionTime->getDuration() . ' secondes.</comment>';
         }
                 
@@ -126,7 +130,7 @@ class Explore extends Command
                 $this->replaceInAFile($fileName, $string, $output);
             } else {
                 $this->replaceInADirectory($fileName, $string, $output);
-              }
+            }
         } 
         catch (Exception $ex) {
                 $output->writeln('<error>' . $ex->getMessage() . '</error>');
@@ -140,10 +144,12 @@ class Explore extends Command
      */
     protected function replaceInAFile($fileName, StringInterface $string, OutputInterface $output) 
     {
-       $file   = new File($fileName, $string);
+       $this->file->setFileName($fileName);
+       fopen($this->file->getFileName(), 'c+');
+       $this->file->setString($string);
+       
        try {
-           $output->writeln('<info>' . $file->doReplaceInAllFile() . '</info>');
-           $this->countFiles ++;
+           $output->writeln('<info>' . $this->file->doReplaceInAllFile() . '</info>');
        } catch (Exception $ex) {
            $output->writeln('<error>' . $ex->getMessage() . '</error>');
          } 
@@ -156,11 +162,12 @@ class Explore extends Command
      */
     protected function replaceInADirectory($fileName, StringInterface $string, OutputInterface $output)
     {
-        $dir = new DirectoryIterator($fileName);
+        $this->directory->setPath($fileName);
+        $this->directory->initDirectory();
         
-        foreach ($dir as $fileName) {
-            if (false === $dir->isDot()) {
-                $this->executeReplace($dir->getPathname(), $string, $output);
+        foreach ($this->directory as $fileName) {
+            if (false === $this->directory->isDot()) {
+                $this->executeReplace($this->directory->getPathname(), $string, $output);
             }
         }
     }
