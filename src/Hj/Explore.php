@@ -53,14 +53,14 @@ class Explore extends Command
             StringInterface $string, 
             TimeExecutionInterface $executionTime,
             FileInterface $file,
-            \Iterator $direcory
+            \Iterator $directory
     ) {
         parent::__construct(null);
         
         $this->string        = $string;
         $this->executionTime = $executionTime;
         $this->file          = $file;
-        $this->directory     = $direcory;
+        $this->directory     = $directory;
     }
     
     protected function configure()
