@@ -35,122 +35,110 @@ class FileTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
          $this->string = $this->getMock('Hj\StringInterface');
-    }
-    
-    /**
-     * @param string $fileName
-     * 
-     * @return File
-     */
-    private function getFile($fileName)
-    {
-        $this->file = new File($fileName, $this->string);
-        
-        return $this->file;
+         $this->file   = new File();
     }
 
     public function testShouldBeAFileInterface()
     {
-        $fileName = '../Fixtures/test.php';
-        // assert that the file exist
-        $this->assertTrue(file_exists($fileName));
-        $this->assertInstanceOf(
-                'Hj\FileInterface', 
-                $this->getFile($fileName)
-        );
+        $this->assertInstanceOf('Hj\FileInterface', $this->file);
     }
     
-    public function testShouldReplaceExistingStringInExistingFile()
+    public function testShouldCountFilesEqualsToZeroOnConstruct()
     {
-        $fileName2 = '../Fixtures/test2.php';
-        $fileName3 = '../Fixtures/test3.php';
-        // assert that the files exists
-        $this->assertTrue(file_exists($fileName2));
-        $this->assertTrue(file_exists($fileName3));
+        $this->assertEquals(0, $this->file->getCountFiles());
+    }
+
+    /**
+     * @expectedException \Exception
+     * @expectedExceptionMessage The file or directory [zzz] should not exist
+     */
+    public function testShouldThrowAnExceptionWhenTheFileNotExist()
+    {
+        $this->assertFalse(file_exists('zzz'));
         
-        $file2 = $this->getFile($fileName2);
-        $file3 = $this->getFile($fileName3);
+        $this->file->setFileName('zzz');
+    }
+    
+    public function testShouldReturnTheCorrectFileNameWhenTheFileExist()
+    {
+        $fileName = '../Fixtures/test.php';
         
-        $contentString2 = "<?php\n\n/* Created by Hatim Jacquir\n * User: Hatim Jacquir <jacquirhatim@gmail.com>\n * Date: 22 déc. 2013\n * Time: 15:06:25\n */\n\necho 'I am a string before change';\n";
-        $contentString3 = "<?php\n\n/* Created by Hatim Jacquir\n * User: Hatim Jacquir <jacquirhatim@gmail.com>\n * Date: 22 déc. 2013\n * Time: 15:06:25\n */\n\necho 'I am a string after change';\n";
+        $this->assertTrue(file_exists($fileName));
+        $this->file->setFileName($fileName);
+        $this->assertSame($fileName, $this->file->getFileName());
+    }
+    
+    public function testShouldReturnAnStringObject()
+    {
+        $this->file->setString($this->string);
+        $this->assertInstanceOf('Hj\StringInterface', $this->file->getString());
+    }
+    
+    public function testShouldReplaceWhenTheFileExistAndTheStringExist()
+    {
+        $fileNameInitial = '../Fixtures/test2.php';
+        $fileNameFinal   = '../Fixtures/test3.php';
         
-        file_put_contents($file2, $contentString2);
-        file_put_contents($file3, $contentString3);
+        //assert that the files exists
+        $this->assertTrue(file_exists($fileNameInitial));
+        $this->assertTrue(file_exists($fileNameFinal));
+        
+        $contentStringInitial = "<?php\n\n/* Created by Hatim Jacquir\n * User: Hatim Jacquir <jacquirhatim@gmail.com>\n * Date: 22 déc. 2013\n * Time: 15:06:25\n */\n\necho 'I am a string before change';\n";
+        $contentStringFinal   = "<?php\n\n/* Created by Hatim Jacquir\n * User: Hatim Jacquir <jacquirhatim@gmail.com>\n * Date: 22 déc. 2013\n * Time: 15:06:25\n */\n\necho 'I am a string after change';\n";
+        
+        file_put_contents($fileNameInitial, $contentStringInitial);
+        file_put_contents($fileNameFinal, $contentStringFinal);
         
         $this->string->expects($this->any())
                 ->method('getReplacedString')
                 ->will($this->returnValue('before'));
+        $this->string->expects($this->any())
+                ->method('getStringReplacement')
+                ->will($this->returnValue('after'));
+        
         // assert that the file contains the initial string 
-        $this->assertGreaterThan(0, (strpos($contentString2, 'before')));
+        $this->assertGreaterThan(0, (strpos($contentStringInitial, 'before')));
         
-        $this->string->expects($this->any())
-                ->method('getStringReplacement')
-                ->will($this->returnValue('after'));
+        $this->file->setFileName($fileNameInitial);
+        $this->file->setString($this->string);
+        $this->file->doReplaceInAllFile();
         
-        $file2->doReplaceInAllFile();
-        
-        $this->assertSame(
-                file_get_contents($file2),
-                file_get_contents($file3)
-        );
+        $this->assertSame(file_get_contents($fileNameFinal), file_get_contents($fileNameInitial));
     }
     
     /**
      * @expectedException        Exception
-     * @expectedExceptionMessage The file [zezerr.rer] should not exist
+     * @expectedExceptionMessage The string [zzzzee] was not found in ../Fixtures/test2.php
      */
-    public function testShouldThrowAnExceptionWhenTheFileDoNotExist()
+    public function testShouldThrowAnExceptionWhenTheFileExistAndTheStringDoNotExist()
     {
-       $fileName = 'zezerr.rer';
-       // assert that the file not exist
-       $this->assertFalse(file_exists($fileName));
-       $this->getFile($fileName);
-    }
-    
-    /**
-     * @expectedException        Exception
-     * @expectedExceptionMessage The string [zererz] was not found in ../Fixtures/test.php
-     */
-    public function testShouldThrowAnExceptionWhenTheInitialStringDoNoExist()
-    {
-        $fileName = '../Fixtures/test.php';
-        $this->assertTrue(file_exists($fileName));
+        $fileNameInitial = '../Fixtures/test2.php';
+        $fileNameFinal   = '../Fixtures/test3.php';
         
-        $file = $this->getFile($fileName);
-        $fileGetContent = file_get_contents($file);
+        //assert that the files exists
+        $this->assertTrue(file_exists($fileNameInitial));
+        $this->assertTrue(file_exists($fileNameFinal));
+        
+        $contentStringInitial = "<?php\n\n/* Created by Hatim Jacquir\n * User: Hatim Jacquir <jacquirhatim@gmail.com>\n * Date: 22 déc. 2013\n * Time: 15:06:25\n */\n\necho 'I am a string before change';\n";
+        $contentStringFinal   = "<?php\n\n/* Created by Hatim Jacquir\n * User: Hatim Jacquir <jacquirhatim@gmail.com>\n * Date: 22 déc. 2013\n * Time: 15:06:25\n */\n\necho 'I am a string after change';\n";
+        
+        file_put_contents($fileNameInitial, $contentStringInitial);
+        file_put_contents($fileNameFinal, $contentStringFinal);
         
         $this->string->expects($this->any())
                 ->method('getReplacedString')
-                ->will($this->returnValue('zererz'));
+                ->will($this->returnValue('zzzzee'));
         $this->string->expects($this->any())
                 ->method('getStringReplacement')
                 ->will($this->returnValue('after'));
         
-        $file->replaceTheString($fileGetContent);
-    }
-    
-     /**
-     * @expectedException        Exception
-     * @expectedExceptionMessage The string [zererz] was not found in ../Fixtures/test.php
-     */
-    public function testShouldThrowAnExceptionWhenTheInitialStringDoNoExistWhenTryToReplace()
-    {
-        $fileName = '../Fixtures/test.php';
-        $this->assertTrue(file_exists($fileName));
+        // assert that the file contains the initial string 
+        $this->assertGreaterThan(0, (strpos($contentStringInitial, 'before')));
         
-        $file = $this->getFile($fileName);
-        $fileGetContent = file_get_contents($file);
+        $this->file->setFileName($fileNameInitial);
+        $this->file->setString($this->string);
+        $this->file->doReplaceInAllFile();
         
-        $this->string->expects($this->any())
-                ->method('getReplacedString')
-                ->will($this->returnValue('zererz'));
-        
-        $this->assertFalse(strpos($fileGetContent, 'zererz'));
-        
-        $this->string->expects($this->any())
-                ->method('getStringReplacement')
-                ->will($this->returnValue('after'));
-        
-        $file->doReplaceInAllFile();
+        $this->assertSame(file_get_contents($fileNameFinal), file_get_contents($fileNameInitial));
     }
 }
