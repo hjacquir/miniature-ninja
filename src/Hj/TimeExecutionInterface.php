@@ -19,23 +19,30 @@ interface TimeExecutionInterface
     public function start();
     
      /**
-     * Stop the counting of the time execution of the script
-     * 
-     * @return float The end of the counting script in microtime
+     * Stop here the counting of the time execution of the script
      */
     public function stop();
     
     /**
-     * Set the begin in microtime to 0
+     * Set the begin in microtime
+     * 
+     * @param float $begin
      */
-    public function setBegin();
+    public function setBegin($begin);
     
      /**
      * Set the end of the script
      * 
-     * @param float $end
+     * @param float $end The end value of the script in microtime
      */
     public function setEnd($end);
+    
+    /**
+     * Set the duration
+     * 
+     * @param float $duration The duration of the script
+     */
+    public function setDuration($duration);
     
     /**
      * Get the microtime begin at the beginning of the script
@@ -50,4 +57,11 @@ interface TimeExecutionInterface
      * @return float
      */
     public function getEnd();
+    
+    /**
+     * Get the duration into microtime
+     * 
+     * @return float
+     */
+    public function getDuration();
 }

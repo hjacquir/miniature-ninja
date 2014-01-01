@@ -28,21 +28,26 @@ class TimeExecution implements TimeExecutionInterface
     private $end;
     
     /**
+     * The duration of the script
+     * 
+     * @var float
+     */
+    private $duration;
+    
+    /**
      * Start counting the time execution of the script here
      */
     public function start()
     {
-        $this->setBegin(microtime());
+        $this->setBegin(microtime(true));
     }
     
     /**
-     * Stop the counting of the time execution of the script
-     * 
-     * @return float The end of the counting script in microtime
+     * Stop here the counting of the time execution of the script
      */
     public function stop()
     {
-        $this->setEnd(microtime() - $this->begin);
+        $this->setEnd(microtime(true));
     }
     
     /**
@@ -68,9 +73,9 @@ class TimeExecution implements TimeExecutionInterface
     /**
      * Set the begin in microtime to 0
      */
-    public function setBegin()
+    public function setBegin($begin)
     {
-        $this->begin = 0;
+        $this->begin = $begin;
     }
     
     /**
@@ -81,5 +86,27 @@ class TimeExecution implements TimeExecutionInterface
     public function setEnd($end)
     {
         $this->end = $end;
+    }
+    
+    /**
+     * Get the duration into microtime
+     * 
+     * @return float
+     */
+    public function getDuration()
+    {   
+        $this->duration = $this->end - $this->begin;
+    
+        return $this->duration;
+    }
+    
+    /**
+     * Set the duration
+     * 
+     * @param float $duration The duration of the script
+     */
+    public function setDuration($duration)
+    {
+        $this->duration = $duration;
     }
 }

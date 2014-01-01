@@ -97,13 +97,19 @@ class Explore extends Command
         
         $this->countFiles = 0;
         
-        $this->executionTime->setBegin();
+        $this->executionTime->setBegin(0);
+        $this->executionTime->setEnd(0);
+        $this->executionTime->setDuration(0);
         $this->executionTime->start();
         $this->executeReplace($fileName, $this->string, $output);
         $this->executionTime->stop();
         
-        $message = '<comment>' . $this->countFiles . ' files are done in ' 
-                . $this->executionTime->getEnd() . ' microsecondes.</comment>';
+        $message  = '<comment>No file are done</comment>';
+        
+        if ($this->countFiles > 0) {
+            $message = '<comment>' . $this->countFiles . ' files are done in ' 
+                . $this->executionTime->getDuration() . ' secondes.</comment>';
+        }
                 
         $output->writeln($message);
     }
