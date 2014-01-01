@@ -1,6 +1,5 @@
 <?php
 
-use \Hj\Directory;
 use \Hj\Explore;
 use \Hj\File;
 use \Hj\String;
@@ -18,7 +17,6 @@ $app           = new Application();
 $string        = new String();
 $executionTime = new TimeExecution();
 $file          = new File();
-$directory     = new Directory();
 
-$app->add(new Explore(null, $string, $executionTime, $file, $directory));
+$app->add(new Explore(null, $string, $executionTime, $file));
 $app->run();

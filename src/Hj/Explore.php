@@ -8,7 +8,6 @@
 
 namespace Hj;
 
-use \DirectoryIterator;
 use \Exception;
 use \Symfony\Component\Console\Command\Command;
 use \Symfony\Component\Console\Input\InputArgument;
@@ -35,12 +34,6 @@ class Explore extends Command
     private $executionTime;
     
     /**
-     *
-     * @var DirectoryIterator
-     */
-    private $directory;
-    
-    /**
      * 
      * @param string|null            $name          The name of the command
      * @param StringInterface        $string        A string object
@@ -52,15 +45,13 @@ class Explore extends Command
             $name, 
             StringInterface $string, 
             TimeExecutionInterface $executionTime,
-            FileInterface $file,
-            \Iterator $directory
+            FileInterface $file
     ) {
         parent::__construct(null);
         
         $this->string        = $string;
         $this->executionTime = $executionTime;
         $this->file          = $file;
-        $this->directory     = $directory;
     }
     
     protected function configure()
@@ -129,7 +120,8 @@ class Explore extends Command
             if (false === is_dir($fileName)) {
                 $this->replaceInAFile($fileName, $string, $output);
             } else {
-                $this->replaceInADirectory($fileName, $string, $output);
+                $directory = $fileName;
+                $this->replaceInADirectory($directory, $string, $output);
             }
         } 
         catch (Exception $ex) {
@@ -156,19 +148,42 @@ class Explore extends Command
     }
     
       /**
-     * @param string          $fileName The file or directory name
+     * @param string          $directory The directory name
      * @param StringInterface $string A string object
      * @param OutputInterface $output The console Output
      */
-    protected function replaceInADirectory($fileName, StringInterface $string, OutputInterface $output)
+    protected function replaceInADirectory($directory, StringInterface $string, OutputInterface $output)
     {
-        $this->directory->setPath($fileName);
-        $this->directory->initDirectory();
+        $allFiles = $this->findAllFilesInTheDirectory($directory);
         
-        foreach ($this->directory as $fileName) {
-            if (false === $this->directory->isDot()) {
-                $this->executeReplace($this->directory->getPathname(), $string, $output);
-            }
+        foreach ($allFiles as $file) {
+            $this->replaceInAFile($file, $string, $output);
         }
     }
+    
+    /**
+     * @param string $dir    The directory name
+     * 
+     * @return array $result The list of files
+     */
+    private function findAllFilesInTheDirectory($dir)
+    {
+        $result                  = array();
+        $listAllFilesOrDirectory = scandir($dir);
+        foreach ($listAllFilesOrDirectory as $fileOrDirectory) {
+            if ($fileOrDirectory === '.' || $fileOrDirectory === '..') {
+                continue;
+            }
+            
+            if (is_file("$dir/$fileOrDirectory")) {
+                $result[] = "$dir/$fileOrDirectory";
+                continue;
+            }
+            foreach ($this->findAllFilesInTheDirectory("$dir/$fileOrDirectory") as $file) {
+                $result[] = $file;
+            }
+        }
+        
+        return $result;
+    } 
 }
