@@ -10,7 +10,6 @@ namespace Hj;
 
 use \DirectoryIterator;
 use \Exception;
-use \Iterator;
 use \Symfony\Component\Console\Command\Command;
 use \Symfony\Component\Console\Input\InputArgument;
 use \Symfony\Component\Console\Input\InputInterface;
@@ -146,21 +145,7 @@ class Explore extends Command
            $output->writeln('<error>' . $ex->getMessage() . '</error>');
          } 
     }
-    
-//     /**
-//     * @param string          $directory The directory name
-//     * @param StringInterface $string A string object
-//     * @param OutputInterface $output The console Output
-//     */
-//     private function replaceInADirectory($directory, StringInterface $string, OutputInterface $output)
-//    {
-//        $allFiles = $this->findAllFilesInTheDirectory($directory);
-//        
-//        foreach ($allFiles as $file) {
-//            $this->replaceInAFile($file, $string, $output);
-//        }
-//    }
-    
+
     /**
      * @param string          $directory The directory name
      * @param StringInterface $string A string object
@@ -176,30 +161,4 @@ class Explore extends Command
             }
         }
     }
-    
-    /**
-     * @param string $dir    The directory name
-     * 
-     * @return array $result The list of files
-     */
-    private function findAllFilesInTheDirectory($dir)
-    {
-        $result                  = array();
-        $listAllFilesOrDirectory = scandir($dir);
-        foreach ($listAllFilesOrDirectory as $fileOrDirectory) {
-            if ($fileOrDirectory === '.' || $fileOrDirectory === '..') {
-                continue;
-            }
-            
-            if (is_file("$dir/$fileOrDirectory")) {
-                $result[] = "$dir/$fileOrDirectory";
-                continue;
-            }
-            foreach ($this->findAllFilesInTheDirectory("$dir/$fileOrDirectory") as $file) {
-                $result[] = $file;
-            }
-        }
-        
-        return $result;
-    } 
 }
