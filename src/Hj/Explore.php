@@ -8,7 +8,9 @@
 
 namespace Hj;
 
+use \DirectoryIterator;
 use \Exception;
+use \Iterator;
 use \Symfony\Component\Console\Command\Command;
 use \Symfony\Component\Console\Input\InputArgument;
 use \Symfony\Component\Console\Input\InputInterface;
@@ -39,7 +41,6 @@ class Explore extends Command
      * @param StringInterface        $string        A string object
      * @param TimeExecutionInterface $executionTime A time execution object
      * @param FileInterface          $file          A file object
-     * @param \Iterator              $directory     A directory object
      */
     public function __construct(
             $name, 
@@ -114,14 +115,13 @@ class Explore extends Command
      * @param StringInterface        $string        A string object
      * @param OutputInterface        $output        The console Output
      */
-    protected function executeReplace($fileName, StringInterface $string, OutputInterface $output)
+    private function executeReplace($fileName, StringInterface $string, OutputInterface $output)
     {
         try {
             if (false === is_dir($fileName)) {
                 $this->replaceInAFile($fileName, $string, $output);
             } else {
-                $directory = $fileName;
-                $this->replaceInADirectory($directory, $string, $output);
+                $this->replaceInADirectory($fileName, $string, $output);
             }
         } 
         catch (Exception $ex) {
@@ -134,7 +134,7 @@ class Explore extends Command
      * @param StringInterface $string A string object
      * @param OutputInterface $output The console Output
      */
-    protected function replaceInAFile($fileName, StringInterface $string, OutputInterface $output) 
+     private function replaceInAFile($fileName, StringInterface $string, OutputInterface $output) 
     {
        $this->file->setFileName($fileName);
        fopen($this->file->getFileName(), 'c+');
@@ -147,17 +147,33 @@ class Explore extends Command
          } 
     }
     
-      /**
+//     /**
+//     * @param string          $directory The directory name
+//     * @param StringInterface $string A string object
+//     * @param OutputInterface $output The console Output
+//     */
+//     private function replaceInADirectory($directory, StringInterface $string, OutputInterface $output)
+//    {
+//        $allFiles = $this->findAllFilesInTheDirectory($directory);
+//        
+//        foreach ($allFiles as $file) {
+//            $this->replaceInAFile($file, $string, $output);
+//        }
+//    }
+    
+    /**
      * @param string          $directory The directory name
      * @param StringInterface $string A string object
      * @param OutputInterface $output The console Output
      */
     protected function replaceInADirectory($directory, StringInterface $string, OutputInterface $output)
     {
-        $allFiles = $this->findAllFilesInTheDirectory($directory);
+        $dir = new DirectoryIterator($directory);
         
-        foreach ($allFiles as $file) {
-            $this->replaceInAFile($file, $string, $output);
+        foreach ($dir as $fileName) {
+            if (false === $dir->isDot()) {
+                $this->executeReplace($dir->getPathname(), $string, $output);
+            }
         }
     }
     
