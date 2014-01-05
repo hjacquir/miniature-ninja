@@ -150,6 +150,8 @@ class Explore extends Command
      * @param string          $directory The directory name
      * @param StringInterface $string A string object
      * @param OutputInterface $output The console Output
+     * 
+     * @todo Remove the instance of DirectoryIterator and use DI
      */
     protected function replaceInADirectory($directory, StringInterface $string, OutputInterface $output)
     {
