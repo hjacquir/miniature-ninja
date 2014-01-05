@@ -61,7 +61,7 @@ class FileTest extends PHPUnit_Framework_TestCase
     
     public function testShouldReturnTheCorrectFileNameWhenTheFileExist()
     {
-        $fileName = '../Fixtures/test.php';
+        $fileName = '../Fixtures/FileForTestingFileClass.php';
         
         $this->assertTrue(file_exists($fileName));
         $this->file->setFileName($fileName);
@@ -76,8 +76,8 @@ class FileTest extends PHPUnit_Framework_TestCase
     
     public function testShouldReplaceWhenTheFileExistAndTheStringExist()
     {
-        $fileNameInitial = '../Fixtures/test2.php';
-        $fileNameFinal   = '../Fixtures/test3.php';
+        $fileNameInitial = '../Fixtures/FileForTestingFileClassWithInitialString.php';
+        $fileNameFinal   = '../Fixtures/FileForTestingFileClassWithFinalString.php';
         
         //assert that the files exists
         $this->assertTrue(file_exists($fileNameInitial));
@@ -108,12 +108,12 @@ class FileTest extends PHPUnit_Framework_TestCase
     
     /**
      * @expectedException        Exception
-     * @expectedExceptionMessage The string [zzzzee] was not found in ../Fixtures/test2.php
+     * @expectedExceptionMessage The string [zzzzee] was not found in ../Fixtures/FileForTestingFileClassWithInitialString.php
      */
     public function testShouldThrowAnExceptionWhenTheFileExistAndTheStringDoNotExist()
     {
-        $fileNameInitial = '../Fixtures/test2.php';
-        $fileNameFinal   = '../Fixtures/test3.php';
+        $fileNameInitial = '../Fixtures/FileForTestingFileClassWithInitialString.php';
+        $fileNameFinal   = '../Fixtures/FileForTestingFileClassWithFinalString.php';
         
         //assert that the files exists
         $this->assertTrue(file_exists($fileNameInitial));
