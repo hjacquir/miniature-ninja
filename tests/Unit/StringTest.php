@@ -8,6 +8,7 @@
 
 namespace Hj\Tests\Unit;
 
+use \Hj\String;
 use \PHPUnit_Framework_MockObject_MockObject;
 use \PHPUnit_Framework_TestCase;
 
@@ -17,26 +18,28 @@ require_once '../../vendor/autoload.php';
  * Description of StringTest
  * 
  * @covers Hj\String
- * @todo add missing tests
  */
 class StringTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * @var PHPUnit_Framework_MockObject_MockObject
+     * @var String
      */
-    private $sut;
+    private $string;
     
     public function setUp()
     {
-        $this->sut = $this->getMock('Hj\String');
+        $this->string = new String();
     }
     
     public function testShouldReturnTheReplacedString()
     {
-        $this->sut->expects($this->once())
-                ->method('getReplacedString')
-                ->will($this->returnValue('aString'));
-        
-        $this->assertSame('aString', $this->sut->getReplacedString());
+        $this->string->setReplacedString('zezer');
+        $this->assertSame('zezer', $this->string->getReplacedString());
+    }
+    
+    public function testShouldReturnTheStringReplacement()
+    {
+        $this->string->setStringReplacement('rerer');
+        $this->assertSame('rerer', $this->string->getStringReplacement());
     }
 }

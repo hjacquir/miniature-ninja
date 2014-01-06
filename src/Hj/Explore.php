@@ -153,7 +153,7 @@ class Explore extends Command
      * 
      * @todo Remove the instance of DirectoryIterator and use DI
      */
-    protected function replaceInADirectory($directory, StringInterface $string, OutputInterface $output)
+    private function replaceInADirectory($directory, StringInterface $string, OutputInterface $output)
     {
         $dir = new DirectoryIterator($directory);
         

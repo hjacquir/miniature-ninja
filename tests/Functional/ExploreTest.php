@@ -23,7 +23,17 @@ require_once '../../vendor/autoload.php';
  */
 class ExploreTest extends PHPUnit_Framework_TestCase
 {
-    public function testExecute()
+    /**
+     * @var string
+     */
+    private $commandName;
+    
+    /**
+     * @var CommandTester
+     */
+    private $commandTester;
+    
+    public function setUp()
     {
         $application   = new Application();
         $string        = new String();
@@ -33,23 +43,96 @@ class ExploreTest extends PHPUnit_Framework_TestCase
         $application->add(new Explore(null, $string, $executionTime, $file));
         
         $command = $application->find('s:r');
+        $this->commandName = $command->getName();
         
-        $commandTester = new CommandTester($command);
-        
+        $this->commandTester = new CommandTester($command);
+    }
+    
+    public function testExecuteForAFile()
+    {
         $fileName = '../Fixtures/FileForTestingExploreClass.php';
         $this->assertTrue(file_exists($fileName));
-        $initialContent = "<?php\n\n/* Created by Hatim Jacquir\n * User: Hatim Jacquir <jacquirhatim@gmail.com>\n * Date: 22 déc. 2013\n * Time: 15:06:25\n */\n\necho 'I am a string before change';\n";
+        
+        $initialContent = "<?php\n\n/* Created by Hatim Jacquir\n * User: Hatim Jacquir <jacquirhatim@gmail.com>\n" . 
+                " * Date: 22 déc. 2013\n * Time: 15:06:25\n */\n\necho 'I am a string before change';\n";
         file_put_contents($fileName, $initialContent);
         
         $input = array(
-            'command' => $command->getName(),
+            'command' => $this->commandName,
             'file'    => $fileName,
             'initial' => 'before',
             'final'   => 'after',
         );
-        $output = 'The string [before] was succesfully replaced by [after] in ../Fixtures/FileForTestingExploreClass.php';
-        $commandTester->execute($input);
         
-        $this->assertContains($output, $commandTester->getDisplay());
+        $this->commandTester->execute($input);
+        
+        $output = 'The string [before] was succesfully replaced by [after] in ';
+        $this->assertContains($output, $this->commandTester->getDisplay());
+    }
+    
+     public function testExecuteForADirectory()
+    {
+        $fileName = '../Fixtures/';
+        $this->assertTrue(is_dir($fileName));
+        $initialContent = "<?php\n\n/* Created by Hatim Jacquir\n * User: Hatim Jacquir <jacquirhatim@gmail.com>\n" . 
+                " * Date: 22 déc. 2013\n * Time: 15:06:25\n */\n\necho 'I am a string before change';\n";
+        file_put_contents('../Fixtures/FileForTestingExploreClass.php', $initialContent);
+        
+        $input = array(
+            'command' => $this->commandName,
+            'file'    => $fileName,
+            'initial' => 'before',
+            'final'   => 'after',
+        );
+        
+        $this->commandTester->execute($input);
+        
+        $output = 'The string [before] was succesfully replaced by [after] in ';
+        $this->assertContains($output, $this->commandTester->getDisplay());
+    }
+    
+    public function testShouldReturnAnExceptionErrorMessageWhenTheFileDoNotExist()
+    {
+        $fileName = '../qsdqdsdq/';
+        $this->assertFalse(is_dir($fileName));
+        
+        $initialContent = "<?php\n\n/* Created by Hatim Jacquir\n * User: Hatim Jacquir <jacquirhatim@gmail.com>\n" . 
+                " * Date: 22 déc. 2013\n * Time: 15:06:25\n */\n\necho 'I am a string before change';\n";
+        file_put_contents('../Fixtures/FileForTestingExploreClass.php', $initialContent);
+        
+        $input = array(
+            'command' => $this->commandName,
+            'file'    => $fileName,
+            'initial' => 'before',
+            'final'   => 'after',
+        );
+        
+        $this->commandTester->execute($input);
+        
+        $output = 'The file or directory [../qsdqdsdq/] should not exist';
+        $this->assertContains($output, $this->commandTester->getDisplay());
+        
+    }
+    
+    public function testShouldReturnAnExceptionErrorMessageWhenTheStringDoNotExist()
+    {
+        $fileName = '../Fixtures/';
+        $this->assertTrue(is_dir($fileName));
+        
+        $initialContent = "<?php\n\n/* Created by Hatim Jacquir\n * User: Hatim Jacquir <jacquirhatim@gmail.com>\n" . 
+                " * Date: 22 déc. 2013\n * Time: 15:06:25\n */\n\necho 'I am a string before change';\n";
+        file_put_contents('../Fixtures/FileForTestingExploreClass.php', $initialContent);
+        
+        $input = array(
+            'command' => $this->commandName,
+            'file'    => $fileName,
+            'initial' => 'sdfds',
+            'final'   => 'after',
+        );
+        
+        $this->commandTester->execute($input);
+        
+        $output = 'The string [sdfds] was not found in ';
+        $this->assertContains($output, $this->commandTester->getDisplay()); 
     }
 }
