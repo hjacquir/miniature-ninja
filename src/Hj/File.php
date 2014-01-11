@@ -29,13 +29,8 @@ class File implements FileInterface
      * @var integer The number of files which are done
      */
     private $countFiles;
-    
-    public function __construct()
-    {
-        $this->setCountFiles(0);
-    }
 
-        /**
+    /**
      * Set the name of the file
      * 
      * @param string $fileName The name of the file
@@ -60,7 +55,7 @@ class File implements FileInterface
     /**
      * @param integer $countFiles
      */
-    private function setCountFiles($countFiles)
+    public function setCountFiles($countFiles)
     {
         $this->countFiles = $countFiles;
     }

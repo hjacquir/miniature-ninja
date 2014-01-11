@@ -18,37 +18,9 @@ use \Symfony\Component\Console\Output\OutputInterface;
  */
 class Explore extends Command
 {
-    /**
-     * The string object
-     * 
-     * @var StringInterface
-     */
-    private $string;
-    
-    /**
-     * The execution time of the script
-     * 
-     * @var float
-     */
-    private $executionTime;
-    
-    /**
-     * 
-     * @param string|null            $name          The name of the command
-     * @param StringInterface        $string        A string object
-     * @param TimeExecutionInterface $executionTime A time execution object
-     * @param FileInterface          $file          A file object
-     */
-    public function __construct(
-            $name, 
-            StringInterface $string, 
-            TimeExecutionInterface $executionTime,
-            FileInterface $file
-    ) {
+    public function __construct() 
+    {
         parent::__construct(null);
-        
-        $this->executionTime = $executionTime;
-        $this->file          = $file;
     }
     
     protected function configure()
@@ -85,21 +57,23 @@ class Explore extends Command
         $initial  = $input->getArgument('initial');
         $final    = $input->getArgument('final');
         
-        $searchReplace = new SearchReplace($this->file, $initial, $final);
+        $searchReplace = new SearchReplace($initial, $final);
+
+        $timeExecution = new TimeExecution();
+        $timeExecution->setBegin(0);
+        $timeExecution->setEnd(0);
+        $timeExecution->setDuration(0);
+        $timeExecution->start();
         
-        $this->executionTime->setBegin(0);
-        $this->executionTime->setEnd(0);
-        $this->executionTime->setDuration(0);
-        $this->executionTime->start();
-        $searchReplace->searchReplace($fileName, $output);
-        $this->executionTime->stop();
+        $numberOfFilesSuccess = $searchReplace->searchReplace($fileName, $output);
         
-        $message              = '<comment>No file are done</comment>';
-        $numberOfFilesSuccess = $this->file->getCountFiles();
+        $timeExecution->stop();
+        
+        $message = '<comment>No file are done</comment>';
         
         if ( $numberOfFilesSuccess > 0) {
             $message = '<comment>' . $numberOfFilesSuccess . ' files are done in ' 
-                . $this->executionTime->getDuration() . ' secondes.</comment>';
+                . $timeExecution->getDuration() . ' secondes.</comment>';
         }
                 
         $output->writeln($message);

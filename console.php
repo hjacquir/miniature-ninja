@@ -13,10 +13,6 @@ require_once './vendor/autoload.php';
  * Date: 21 déc. 2013
  * Time: 14:34:15
  */
-$app           = new Application();
-$string        = new String();
-$executionTime = new TimeExecution();
-$file          = new File();
-
-$app->add(new Explore(null, $string, $executionTime, $file));
+$app = new Application();
+$app->add(new Explore());
 $app->run();

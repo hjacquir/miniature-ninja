@@ -18,32 +18,35 @@ use \Symfony\Component\Console\Output\OutputInterface;
 class SearchReplace
 {
     /**
-     * @var FileInterface
-     */
-    private $file;
-    
-    /**
      * @var StringInterface
      */
     private $string;
     
-    public function __construct($file, $initial, $final)
+    /**
+     * @var File
+     */
+    private $file;
+    
+    /**
+     * @param string $initial
+     * @param string $final
+     */
+    public function __construct($initial, $final)
     {
-        $this->file   = $file;
+        $this->file = new File();
         
         $this->string = new String();
         $this->string->setReplacedString($initial);
         $this->string->setStringReplacement($final);
     }
+    
     /**
-     * @param string                 $fileName      The file or directory name
-     * @param StringInterface        $string        A string object
-     * @param OutputInterface        $output        The console Output
+     * @param string          $fileName The file or directory name
+     * @param OutputInterface $output   The console Output
      */
-    public function searchReplace(
-            $fileName, 
-            OutputInterface $output
-    ) {
+    public function searchReplace($fileName, OutputInterface $output) 
+    {
+        $this->file->setCountFiles(0);
         try {
             if (false === is_dir($fileName)) { 
                 $this->replaceInAFile($fileName, $output);
@@ -53,39 +56,39 @@ class SearchReplace
         } 
         catch (Exception $ex) {
                 $output->writeln('<error>' . $ex->getMessage() . '</error>');
-        } 
+        }
+        
+        return $this->file->getCountFiles();
     }
     
      /**
      * @param string          $fileName The file or directory name
-     * @param StringInterface $string A string object
      * @param OutputInterface $output The console Output
      */
      private function replaceInAFile($fileName, OutputInterface $output) 
-    {
-       $this->file->setFileName($fileName);
-       fopen($this->file->getFileName(), 'c+');
-       $this->file->setString($this->string);
+     {
+         
+         $this->file->setFileName($fileName);
+         $this->file->setString($this->string);
        
-       try {
-           $output->writeln('<info>' . $this->file->doReplaceInAllFile() . '</info>');
-       } catch (Exception $ex) {
-           $output->writeln('<error>' . $ex->getMessage() . '</error>');
-         } 
-    }
+         fopen($this->file->getFileName(), 'c+');
+       
+         try {
+             $output->writeln('<info>' . $this->file->doReplaceInAllFile() . '</info>');
+         } catch (Exception $ex) {
+             $output->writeln('<error>' . $ex->getMessage() . '</error>');
+           } 
+      }
 
     /**
      * @param string          $directory The directory name
-     * @param StringInterface $string A string object
      * @param OutputInterface $output The console Output
-     * 
-     * @todo Remove the instance of DirectoryIterator and use DI
      */
     private function replaceInADirectory($directory, OutputInterface $output)
     {
         $dir = new DirectoryIterator($directory);
         
-        foreach ($dir as $fileName) {
+        foreach ($dir as $file) {
             if (false === $dir->isDot()) {
                 $this->searchReplace($dir->getPathname(), $output);
             }
