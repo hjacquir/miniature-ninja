@@ -43,9 +43,10 @@ class FileTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Hj\FileInterface', $this->file);
     }
     
-    public function testShouldCountFilesEqualsToZeroOnConstruct()
+    public function testShouldReturnTheCorrectFilesNummber()
     {
-        $this->assertEquals(0, $this->file->getCountFiles());
+        $this->file->setCountFiles(4);
+        $this->assertEquals(4, $this->file->getCountFiles());
     }
 
     /**
