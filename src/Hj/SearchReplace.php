@@ -34,6 +34,7 @@ class SearchReplace
     public function __construct($initial, $final)
     {
         $this->file = new File();
+        $this->file->setCountFiles(0);
         
         $this->string = new String();
         $this->string->setReplacedString($initial);
@@ -46,7 +47,6 @@ class SearchReplace
      */
     public function searchReplace($fileName, OutputInterface $output) 
     {
-        $this->file->setCountFiles(0);
         try {
             if (false === is_dir($fileName)) { 
                 $this->replaceInAFile($fileName, $output);

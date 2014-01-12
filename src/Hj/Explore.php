@@ -8,6 +8,7 @@
 
 namespace Hj;
 
+use \PHP_Timer;
 use \Symfony\Component\Console\Command\Command;
 use \Symfony\Component\Console\Input\InputArgument;
 use \Symfony\Component\Console\Input\InputInterface;
@@ -58,22 +59,15 @@ class Explore extends Command
         $final    = $input->getArgument('final');
         
         $searchReplace = new SearchReplace($initial, $final);
-
-        $timeExecution = new TimeExecution();
-        $timeExecution->setBegin(0);
-        $timeExecution->setEnd(0);
-        $timeExecution->setDuration(0);
-        $timeExecution->start();
         
+        PHP_Timer::start();
         $numberOfFilesSuccess = $searchReplace->searchReplace($fileName, $output);
-        
-        $timeExecution->stop();
-        
+        $time = PHP_Timer::stop();
         $message = '<comment>No file are done</comment>';
         
         if ( $numberOfFilesSuccess > 0) {
             $message = '<comment>' . $numberOfFilesSuccess . ' files are done in ' 
-                . $timeExecution->getDuration() . ' secondes.</comment>';
+                . PHP_Timer::secondsToTimeString($time) . '.</comment>';
         }
                 
         $output->writeln($message);

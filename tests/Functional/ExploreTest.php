@@ -36,11 +36,7 @@ class ExploreTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $application   = new Application();
-        $string        = new String();
-        $executionTime = new TimeExecution();
-        $file          = new File();
-        
-        $application->add(new Explore(null, $string, $executionTime, $file));
+        $application->add(new Explore());
         
         $command = $application->find('s:r');
         $this->commandName = $command->getName();
@@ -66,7 +62,8 @@ class ExploreTest extends PHPUnit_Framework_TestCase
         
         $this->commandTester->execute($input);
         
-        $output = 'The string [before] was succesfully replaced by [after] in ';
+        $output = 'The string [before] was succesfully replaced by [after] in ../Fixtures/FileForTestingExploreClass.php' .
+                "\n" . '1 files are done in ';
         $this->assertContains($output, $this->commandTester->getDisplay());
     }
     
@@ -76,7 +73,9 @@ class ExploreTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(is_dir($fileName));
         $initialContent = "<?php\n\n/* Created by Hatim Jacquir\n * User: Hatim Jacquir <jacquirhatim@gmail.com>\n" . 
                 " * Date: 22 déc. 2013\n * Time: 15:06:25\n */\n\necho 'I am a string before change';\n";
+        
         file_put_contents('../Fixtures/FileForTestingExploreClass.php', $initialContent);
+        file_put_contents('../Fixtures/FileForTestingExploreClass2.php', $initialContent);
         
         $input = array(
             'command' => $this->commandName,
@@ -87,7 +86,12 @@ class ExploreTest extends PHPUnit_Framework_TestCase
         
         $this->commandTester->execute($input);
         
-        $output = 'The string [before] was succesfully replaced by [after] in ';
+        $output = 'The string [before] was succesfully replaced by [after] in ../Fixtures/FileForTestingExploreClass.php' . "\n" .
+                'The string [before] was succesfully replaced by [after] in ../Fixtures/FileForTestingExploreClass2.php' . "\n". 
+                'The string [before] was not found in ../Fixtures/FileForTestingFileClass.php' . "\n\n". 
+                'The string [before] was not found in ../Fixtures/FileForTestingFileClassWithFinalString.php' . "\n\n". 
+                'The string [before] was not found in ../Fixtures/FileForTestingFileClassWithInitialString.php' . "\n\n".
+                '2 files are done in ';
         $this->assertContains($output, $this->commandTester->getDisplay());
     }
     
@@ -109,15 +113,15 @@ class ExploreTest extends PHPUnit_Framework_TestCase
         
         $this->commandTester->execute($input);
         
-        $output = 'The file or directory [../qsdqdsdq/] should not exist';
+        $output = 'The file or directory [../qsdqdsdq/] should not exist' . "\n" . 'No file are done';
         $this->assertContains($output, $this->commandTester->getDisplay());
         
     }
     
     public function testShouldReturnAnExceptionErrorMessageWhenTheStringDoNotExist()
     {
-        $fileName = '../Fixtures/';
-        $this->assertTrue(is_dir($fileName));
+        $fileName = '../Fixtures/FileForTestingExploreClass.php';
+        $this->assertTrue(file_exists($fileName));
         
         $initialContent = "<?php\n\n/* Created by Hatim Jacquir\n * User: Hatim Jacquir <jacquirhatim@gmail.com>\n" . 
                 " * Date: 22 déc. 2013\n * Time: 15:06:25\n */\n\necho 'I am a string before change';\n";
@@ -132,7 +136,7 @@ class ExploreTest extends PHPUnit_Framework_TestCase
         
         $this->commandTester->execute($input);
         
-        $output = 'The string [sdfds] was not found in ';
+        $output = 'The string [sdfds] was not found in ../Fixtures/FileForTestingExploreClass.php' . "\n\n" . 'No file are done';
         $this->assertContains($output, $this->commandTester->getDisplay()); 
     }
 }
