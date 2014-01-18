@@ -9,9 +9,6 @@
 namespace Hj\Tests\Functional;
 
 use \Hj\Explore;
-use \Hj\File;
-use \Hj\String;
-use \Hj\TimeExecution;
 use \PHPUnit_Framework_TestCase;
 use \Symfony\Component\Console\Application;
 use \Symfony\Component\Console\Tester\CommandTester;
